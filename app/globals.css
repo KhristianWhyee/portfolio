@@ -1,0 +1,176 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Signal Trace palette — grounded in the PCB / oscilloscope world */
+  --bg: #0a0e14;          /* board substrate / scope black */
+  --surface: #0f1520;
+  --surface-2: #141c2a;
+  --line: #1e293b;        /* hairline traces */
+  --line-bright: #2b3a52;
+  --copper: #c8843f;      /* PCB copper — primary accent */
+  --copper-bright: #e6a860;
+  --phosphor: #4fd6c4;    /* scope phosphor — secondary accent */
+  --text: #e8eef2;
+  --text-dim: #93a1b3;
+  --text-faint: #5d6b7d;
+
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* PCB trace grid — the board substrate the whole site sits on */
+.trace-grid {
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 44px 44px;
+  background-position: center;
+  mask-image: radial-gradient(ellipse 100% 70% at 50% 0%, #000 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 100% 70% at 50% 0%, #000 30%, transparent 75%);
+  opacity: 0.35;
+}
+
+/* Reference-designator label — the site's structural signature */
+.refdes {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--copper);
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+/* Registration / fiducial corner marks used on cards + section frames */
+.fiducial::before,
+.fiducial::after {
+  content: "";
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border-color: var(--line-bright);
+  border-style: solid;
+  border-width: 0;
+  pointer-events: none;
+}
+.fiducial::before {
+  top: -1px;
+  left: -1px;
+  border-top-width: 1px;
+  border-left-width: 1px;
+}
+.fiducial::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom-width: 1px;
+  border-right-width: 1px;
+}
+
+/* Solder-pad bullet used in lists */
+.pad-bullet {
+  position: relative;
+}
+.pad-bullet::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--copper);
+  box-shadow: 0 0 0 2px rgba(200, 132, 63, 0.18);
+}
+
+/* Reveal-on-scroll */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Animated signal sweep on the hero trace */
+@keyframes trace-dash {
+  to {
+    stroke-dashoffset: -1000;
+  }
+}
+.signal-flow {
+  stroke-dasharray: 6 10;
+  animation: trace-dash 14s linear infinite;
+}
+
+@keyframes blip-pulse {
+  0%, 100% { opacity: 0.25; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.35); }
+}
+.blip {
+  animation: blip-pulse 2.6s ease-in-out infinite;
+}
+
+::selection {
+  background: rgba(79, 214, 196, 0.28);
+  color: #fff;
+}
+
+/* Focus visibility for keyboard users */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--phosphor);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.link-underline {
+  background-image: linear-gradient(var(--copper), var(--copper));
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.3s ease;
+}
+.link-underline:hover {
+  background-size: 100% 1px;
+}
